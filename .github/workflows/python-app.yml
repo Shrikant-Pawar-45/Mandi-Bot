@@ -1,0 +1,27 @@
+name: CI / Deploy
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run API smoke test
+        run: |
+          python test_api.py
+
+  # Optional: Add a deploy job for Streamlit Community Cloud if using secrets and an API
+  # Streamlit Community Cloud deploy is usually done by linking the GitHub repo in the Streamlit UI.
