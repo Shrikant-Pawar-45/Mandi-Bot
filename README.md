@@ -4,17 +4,16 @@ MandiBot is a Streamlit-based chatbot designed specifically for farmers and vend
 
 ## Features
 
-- **Today & Yesterday Prices**: Get both current and previous day's crop prices
-- **Price Trend Analysis**: Compare prices with visual trend indicators
-- **Role-based Interface**: Separate interfaces for farmers and vendors
-- **Smart Search**: Natural language queries with fuzzy matching
-- **State/Market Filtering**: Optional location-based filtering
+- **Real-time Prices**: Get current and historical mandi prices
+- **Smart Search**: Natural language queries with fuzzy matching and semantic search
+- **Location Filtering**: Filter by state, district, or market
+- **Fallback Search**: Automatically searches previous days if no data for today
 - **Caching**: 1-hour cache for improved performance
 - **Beautiful UI**: Green-themed interface with agricultural branding
-- **Mobile Friendly**: Responsive design that works on all devices
+- **Mobile Friendly**: Responsive design that works on desktop and mobile devices
 
 ## Screenshot
-
+### Streamlit App Link: https://mandi-bot.streamlit.app/
 ![Screenshot](images/image.png)
 ## Installation
 
@@ -121,7 +120,7 @@ The repo contains a sample GitHub Actions workflow at `.github/workflows/python-
 
 - Go to https://share.streamlit.io and sign in with GitHub.
 - Click "New app" and select your repository and branch (`main`).
-- Set the main file to `app.py` and the Python version to 3.12 if prompted.
+- Set the main file to `app.py` and the Python version to 3.13 if prompted.
 - Click "Deploy". Streamlit will install packages from `requirements.txt`.
 
 Notes:
