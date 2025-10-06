@@ -1,3 +1,3 @@
-- [x] Update requirements.txt to remove TensorFlow upper bounds
+- [x] Update requirements.txt to remove TensorFlow upper bounds and fix conflicts
 - [x] Update runtime.txt to python-3.13.0
 - [ ] Push changes and redeploy on Streamlit Cloud
