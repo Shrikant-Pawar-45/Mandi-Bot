@@ -1,106 +1,68 @@
-#!/usr/bin/env python3
-"""
-Test script to verify MandiBot API functionality
-"""
-
 import requests
-import json
 from datetime import datetime, timedelta
 
-def test_mandi_api():
-    """Test the data.gov.in mandi API"""
-    print("🌾 Testing MandiBot API Connection...")
-    
-    base_url = "https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070"
-    api_key = "579b464db66ec23bdd000001821e64e87e204b907bc5b548880a106d"
-    
-    # Get today's and yesterday's dates
-    today = datetime.now().strftime("%d/%m/%Y")
-    yesterday = (datetime.now() - timedelta(days=1)).strftime("%d/%m/%Y")
-    print(f"📅 Testing for today: {today}")
-    print(f"📅 Testing for yesterday: {yesterday}")
-    
-    # Test parameters for today
-    params_today = {
-        "api-key": api_key,
-        "format": "json",
-        "limit": "5",
-        "filters[commodity]": "Tomato",
-        "filters[arrival_date]": today
-    }
-    
-    # Test parameters for yesterday
-    params_yesterday = {
-        "api-key": api_key,
-        "format": "json",
-        "limit": "5",
-        "filters[commodity]": "Tomato",
-        "filters[arrival_date]": yesterday
-    }
-    
-    try:
-        print("🔄 Testing Today's Data...")
-        response_today = requests.get(base_url, params=params_today, timeout=10)
-        response_today.raise_for_status()
-        data_today = response_today.json()
-        
-        print(f"✅ Today's API Status: {data_today.get('status', 'Unknown')}")
-        print(f"📊 Today's Records: {data_today.get('count', 0)}")
-        
-        print("\n🔄 Testing Yesterday's Data...")
-        response_yesterday = requests.get(base_url, params=params_yesterday, timeout=10)
-        response_yesterday.raise_for_status()
-        data_yesterday = response_yesterday.json()
-        
-        print(f"✅ Yesterday's API Status: {data_yesterday.get('status', 'Unknown')}")
-        print(f"📊 Yesterday's Records: {data_yesterday.get('count', 0)}")
-        
-        # Show sample records
-        if data_today.get('records'):
-            print(f"\n🎯 Today's Sample Record:")
-            record = data_today['records'][0]
-            print(f"   State: {record.get('state', 'N/A')}")
-            print(f"   Market: {record.get('market', 'N/A')}")
-            print(f"   Modal Price: ₹{record.get('modal_price', 'N/A')}/quintal")
-            print(f"   Date: {record.get('arrival_date', 'N/A')}")
-        else:
-            print("⚠️  No records found for today")
-            
-        if data_yesterday.get('records'):
-            print(f"\n🎯 Yesterday's Sample Record:")
-            record = data_yesterday['records'][0]
-            print(f"   State: {record.get('state', 'N/A')}")
-            print(f"   Market: {record.get('market', 'N/A')}")
-            print(f"   Modal Price: ₹{record.get('modal_price', 'N/A')}/quintal")
-            print(f"   Date: {record.get('arrival_date', 'N/A')}")
-        else:
-            print("⚠️  No records found for yesterday")
-            
-        print("\n✅ API Test Completed Successfully!")
-        return True
-        
-    except requests.exceptions.RequestException as e:
-        print(f"❌ API Request Error: {str(e)}")
-        return False
-    except json.JSONDecodeError:
-        print("❌ JSON Parsing Error")
-        return False
-    except Exception as e:
-        print(f"❌ Unexpected Error: {str(e)}")
-        return False
+print("Current date:", datetime.now().strftime("%d/%m/%Y"))
 
-if __name__ == "__main__":
-    print("=" * 50)
-    print("🌾 MandiBot API Test")
-    print("=" * 50)
-    
-    success = test_mandi_api()
-    
-    print("\n" + "=" * 50)
-    if success:
-        print("🎉 All tests passed! MandiBot is ready to use.")
-        print("\nTo run the application:")
-        print("   streamlit run app.py")
-    else:
-        print("⚠️  Some tests failed. Check your internet connection.")
-    print("=" * 50)
+API_KEY = "579b464db66ec23bdd000001821e64e87e204b907bc5b548880a106d"
+BASE_URL = "https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070"
+
+# Test without filters
+params = {"api-key": API_KEY, "format": "json", "limit": "10"}
+response = requests.get(BASE_URL, params=params)
+print("Status code:", response.status_code)
+if response.status_code == 200:
+    data = response.json()
+    print("Records:", len(data.get("records", [])))
+    if data.get("records"):
+        print("Sample record:", data["records"][0])
+else:
+    print("Error:", response.text)
+
+# Test with commodity Onion
+params2 = {"api-key": API_KEY, "format": "json", "limit": "100", "filters[commodity]": "Onion"}
+response2 = requests.get(BASE_URL, params=params2)
+print("\nWith commodity Onion:")
+print("Status code:", response2.status_code)
+if response2.status_code == 200:
+    data2 = response2.json()
+    print("Records:", len(data2.get("records", [])))
+    if data2.get("records"):
+        print("Sample record:", data2["records"][0])
+        # Check if any in Maharashtra
+        maharashtra_records = [r for r in data2["records"] if r.get('state') == 'Maharashtra']
+        print("Maharashtra records:", len(maharashtra_records))
+        if maharashtra_records:
+            print("Sample Maharashtra:", maharashtra_records[0])
+else:
+    print("Error:", response2.text)
+
+# Test with date yesterday
+yesterday = (datetime.now() - timedelta(days=1)).strftime("%d/%m/%Y")
+params3 = {"api-key": API_KEY, "format": "json", "limit": "10", "filters[arrival_date]": yesterday}
+response3 = requests.get(BASE_URL, params=params3)
+print(f"\nWith date {yesterday}:")
+print("Status code:", response3.status_code)
+if response3.status_code == 200:
+    data3 = response3.json()
+    print("Records:", len(data3.get("records", [])))
+    if data3.get("records"):
+        print("Sample record:", data3["records"][0])
+else:
+    print("Error:", response3.text)
+
+# Test with commodity and date
+params4 = {"api-key": API_KEY, "format": "json", "limit": "100", "filters[commodity]": "Onion", "filters[arrival_date]": "06/10/2025"}
+response4 = requests.get(BASE_URL, params=params4)
+print("\nWith commodity Onion and date 06/10/2025:")
+print("Status code:", response4.status_code)
+if response4.status_code == 200:
+    data4 = response4.json()
+    print("Records:", len(data4.get("records", [])))
+    if data4.get("records"):
+        print("Sample record:", data4["records"][0])
+        maharashtra_records = [r for r in data4["records"] if r.get('state') == 'Maharashtra']
+        print("Maharashtra records:", len(maharashtra_records))
+        if maharashtra_records:
+            print("Sample Maharashtra:", maharashtra_records[0])
+else:
+    print("Error:", response4.text)
